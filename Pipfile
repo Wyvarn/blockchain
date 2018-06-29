@@ -6,10 +6,13 @@ name = "pypi"
 [packages]
 flask = "*"
 requests = "*"
+flask-script = "*"
 
 [dev-packages]
 pytest = "*"
 black = "*"
+better-exceptions = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.6"
