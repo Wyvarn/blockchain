@@ -32,13 +32,13 @@ class Blockchain(object):
         self.current_transactions = []
         self.chain = []
 
-        self.new_block(previous_hash=1, proof=100)
+        self.new_block(previous_hash="1", proof=100)
 
     def new_block(self, proof, previous_hash=None):
         """
         creates a new block and adds it to the chain
         :param previous_hash: (Optional) Previous hash of the block in the chain
-        :type previous_hash int
+        :type previous_hash str
         :param proof Proof given by proof of work algorithm
         :type proof int
         :return: new Block

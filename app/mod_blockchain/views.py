@@ -32,7 +32,40 @@ def new_transaction():
 
 @block.route("/mine", methods=["POST"])
 def mine_block():
-    return "Mine a new block"
+    """
+    Our mining endpoint is where the magic happens, and it’s easy. It has to do three things:
+    1. Calculate the Proof of Work
+    2. Reward the miner (us) by adding a transaction granting us 1 coin
+    3. Forge the new Block by adding it to the chain
+
+    :return: json response
+    :rtype: tuple
+    """
+    last_block = blockchain.last_block
+    last_proof = last_block["proof"]
+    proof = blockchain.proof_of_work(last_proof)
+
+    # We must receive a reward for finding the proof.
+    # The sender is "0" to signify that this node has mined a new coin.
+    blockchain.new_transaction(
+        sender="0",
+        recipient=node_identifier,
+        amount=1
+    )
+
+    # forge a new block by adding it to the chain
+    previous_hash = blockchain.hash(last_block)
+    block = blockchain.new_block(proof, previous_hash)
+
+    response = dict(
+        message="New block forged",
+        index=block["index"],
+        transactions=block["transactions"],
+        proof=block["proof"],
+        previous_hash=block["previous_hash"]
+    )
+
+    return jsonify(response), 200
 
 
 @block.route("/chain", methods=["GET"])

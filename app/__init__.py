@@ -3,7 +3,7 @@ from flask import Flask
 from config import config
 import jinja2
 
-logger = logging.getLogger("BlockchainLogger")
+logger = logging.getLogger(__name__)
 
 
 class BlockApp(Flask):
@@ -55,10 +55,14 @@ def create_app(config_name):
     app = BlockApp()
 
     # configure the application from the config name provided
+    logging.debug(f"Configuring application with config {config_name}")
     app.config.from_object(config[config_name])
+    logging.debug("Initializing application with config")
+
     config[config_name].init_app(app)
 
     # register blueprints
+    logging.debug("Registering blueprints")
     register_blueprints(app)
 
     # this will reduce the load time for templates and increase the application performance
@@ -74,4 +78,5 @@ def register_blueprints(application):
     """
     from app.mod_blockchain import block
 
+    logging.debug(f"Registering blueprint {block}")
     application.register_blueprint(block)
