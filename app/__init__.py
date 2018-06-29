@@ -74,4 +74,4 @@ def register_blueprints(application):
     """
     from app.mod_blockchain import block
 
-    application.register_blueprint(block, "/api/")
+    application.register_blueprint(block)
