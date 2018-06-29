@@ -17,6 +17,8 @@ block = {
 import hashlib
 import json
 from time import time
+from urllib.parse import urlparse
+from app import logger
 
 
 class Blockchain(object):
@@ -31,7 +33,7 @@ class Blockchain(object):
         """
         self.current_transactions = []
         self.chain = []
-
+        self.nodes = set()
         self.new_block(previous_hash="1", proof=100)
 
     def new_block(self, proof, previous_hash=None):
@@ -128,3 +130,88 @@ class Blockchain(object):
         guess = f"{last_proof}{proof}".encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
+
+    def register_node(self, address):
+        """
+        Adds a new node to the list of nodes
+        :param address: Address of node e.g http://192.168.1.0:8000
+        :type address str
+        :return: None
+        :rtype: None
+        """
+        parsed_url = urlparse(address)
+        if parsed_url.netloc:
+            self.nodes.add(parsed_url.netloc)
+        elif parsed_url.path:
+            # Accepts a URL without scheme
+            self.nodes.add(parsed_url.path)
+        else:
+            raise ValueError("Invalid URL")
+
+    def valid_chain(self, chain):
+        """
+        Determine if a given blockchain is valid
+        :param chain: Blockchain
+        :type chain Blockchain
+        :return: True if valid, False otherwise
+        :rtype: bool
+        """
+
+        last_block = chain[0]
+        current_index = 1
+
+        while current_index < len(chain):
+            block = chain[current_index]
+            logger.debug(f'Last block {last_block}')
+            logger.debug(f'block {block}')
+            logger.debug("\n-----------\n")
+
+            # check that the hash of the block is correct
+            last_block_hash = self.hash(block)
+
+            if block["previous_hash"] != last_block_hash:
+                return False
+
+            # check that the proof of work is correct
+
+            # Check that the Proof of Work is correct
+            if not self.valid_proof(last_block['proof'], block['proof'], last_block_hash):
+                return False
+
+            last_block = block
+            current_index += 1
+
+        return True
+
+    def resolve_conflicts(self):
+        """
+        This is our consensus algorithm, it resolves conflicts
+        by replacing our chain with the longest one in the network.
+        :return: True if our chain was replaced, False if not
+        """
+
+        neighbours = self.nodes
+        new_chain = None
+
+        # We're only looking for chains longer than ours
+        max_length = len(self.chain)
+
+        # Grab and verify the chains from all the nodes in our network
+        for node in neighbours:
+            response = requests.get(f'http://{node}/chain')
+
+            if response.status_code == 200:
+                length = response.json()['length']
+                chain = response.json()['chain']
+
+                # Check if the length is longer and the chain is valid
+                if length > max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+
+        # Replace our chain if we discovered a new, valid chain longer than ours
+        if new_chain:
+            self.chain = new_chain
+            return True
+
+        return False
