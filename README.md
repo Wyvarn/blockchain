@@ -94,7 +94,252 @@ making it accessible publicly to the host. There is a [Vagrantfile](./Vagrantfil
 [Vagrant](https://www.vagrantup.com/) will need to be installed as well as [VirtualBox](https://www.virtualbox.org/). 
 However, this setup is not necessary to have.
 
+Once the application is up and running, you can interact with the various endpoints that exist with either 
+[curl](https://curl.haxx.se/), [httpie](https://httpie.org/) or any REST client.
 
+### Available endpoints
+
+| Endpoint | Description |
+| ---- | ------------- |
+| [POST /api/block/transaction/new](#) | Creates a new transaction
+| [POST /api/block/mine](#) | Mines a block
+| [GET /api/block/chain](#) | Gets the blockchain
+| [POST /api/block/nodes/register](#) | Register a node
+| [POST /api/block/nodes/resolve](#) | Resolve nodes
+
+
+### Example requests
+
+___Create a new transaction___
+
+Creates a new transaction
+
+```bash
+curl --request POST \                                             
+  --url http://127.0.0.1:5000/api/block/transactions/new \
+  --header 'content-type: application/json' \
+  --data '{
+ "sender": "onluncd",
+ "recipient": "bouncda",
+ "amount": 100
+}'
+{
+  "message": "Transaction will be added to block 2"
+}
+```
+> Note that sender and recipient are the addresses 
+
+___Mine a block___
+
+Mines a block
+
+
+```bash
+$ curl --request POST --url http://127.0.0.1:5000/api/block/mine --header 'content-type: application/json'
+{
+  "index": 4, 
+  "message": "New block forged", 
+  "previous_hash": "5b4829f6824ac142fd006c88a4740cd58f3eb831a8d6ae852277e28d19e337bf", 
+  "proof": 119678, 
+  "transactions": [
+    {
+      "amount": 1, 
+      "recipient": "0cc5349eba584f3484b0b3fe0d12bd60", 
+      "sender": "0"
+    }
+  ]
+}
+```
+> mines a block
+
+This mines a block in the chain and _awards_ the miner with 1 coin.
+
+___Get the chain___
+
+Gets the chain.
+
+```bash
+$ curl --request GET --url http://127.0.0.1:5000/api/block/chain
+{
+	"chain": [
+		{
+			"index": 1,
+			"previous_hash": "1",
+			"proof": 100,
+			"timestamp": 1530568221.2421486,
+			"transactions": []
+		},
+		{
+			"index": 2,
+			"previous_hash": "991474378466aecb0439af5db42fb4488397a171b75867c104031da20ca0ee29",
+			"proof": 35293,
+			"timestamp": 1530568876.0994635,
+			"transactions": [
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 100,
+					"recipient": "bouncda",
+					"sender": "onluncd"
+				},
+				{
+					"amount": 100,
+					"recipient": "bouncda",
+					"sender": "onluncd"
+				},
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		},
+		{
+			"index": 3,
+			"previous_hash": "53f4b2d8f3c90eaed36ef8c78d1a35a637d3f8b24aae44b5de5686143dea0a0f",
+			"proof": 35089,
+			"timestamp": 1530568887.5306444,
+			"transactions": [
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		},
+		{
+			"index": 4,
+			"previous_hash": "5b4829f6824ac142fd006c88a4740cd58f3eb831a8d6ae852277e28d19e337bf",
+			"proof": 119678,
+			"timestamp": 1530568947.0732439,
+			"transactions": [
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		}
+	],
+	"length": 4
+}
+```
+> This will get the whole block chain
+
+
+___Resolve nodes___
+
+
+```bash
+$ curl --request GET --url http://127.0.0.1:5000/api/block/nodes/resolve
+{
+	"chain": [
+		{
+			"index": 1,
+			"previous_hash": "1",
+			"proof": 100,
+			"timestamp": 1530568221.2421486,
+			"transactions": []
+		},
+		{
+			"index": 2,
+			"previous_hash": "991474378466aecb0439af5db42fb4488397a171b75867c104031da20ca0ee29",
+			"proof": 35293,
+			"timestamp": 1530568876.0994635,
+			"transactions": [
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 90,
+					"recipient": "wsedrftgyuhijokp",
+					"sender": "rctvybiunoimpl"
+				},
+				{
+					"amount": 100,
+					"recipient": "bouncda",
+					"sender": "onluncd"
+				},
+				{
+					"amount": 100,
+					"recipient": "bouncda",
+					"sender": "onluncd"
+				},
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		},
+		{
+			"index": 3,
+			"previous_hash": "53f4b2d8f3c90eaed36ef8c78d1a35a637d3f8b24aae44b5de5686143dea0a0f",
+			"proof": 35089,
+			"timestamp": 1530568887.5306444,
+			"transactions": [
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		},
+		{
+			"index": 4,
+			"previous_hash": "5b4829f6824ac142fd006c88a4740cd58f3eb831a8d6ae852277e28d19e337bf",
+			"proof": 119678,
+			"timestamp": 1530568947.0732439,
+			"transactions": [
+				{
+					"amount": 1,
+					"recipient": "0cc5349eba584f3484b0b3fe0d12bd60",
+					"sender": "0"
+				}
+			]
+		}
+	],
+	"message": "Our chain is authoritative"
+}
+```
+> Resolves the nodes in the chain
+
+___Register nodes___
+
+```bash
+$ curl --request POST --url http://127.0.0.1:5000/api/block/nodes/register \
+  --header 'content-type: application/json' \
+  --data '{
+	"nodes":["http://192.168.1.0:8000"]
+}'
+{
+	"message": "New nodes have been added",
+	"total_nodes": [
+		"192.168.1.0:8000"
+	]
+}
+```
+> registers nodes in the chain
 
 ## Coding style
 
