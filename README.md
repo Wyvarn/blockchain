@@ -63,6 +63,39 @@ python manage.py test
 This will run unit tests on utilities used and on the flask application by creating a 
 [flask test client](http://flask.pocoo.org/docs/1.0/testing/).
 
+## Running the application
+
+First you will need to create a `.env` file at the root of the project and set the following:
+
+```dotenv
+SECRET_KEY=<SECRET_KEY>
+CSRF_SESSION_KEY=<SESSION_KEY>
+SECURITY_PASSWORD_SALT=<SECURITY_PASSWORD_SALT>
+FLASK_CONFIG=develop
+```
+
+The application can be run with:
+
+```bash
+python manage.py runserver
+```
+
+This will start up the application on address [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+In the case that this is running in a virtual machine, say, with [Vagrant](https://www.vagrantup.com/), then use the
+`publicserver` command:
+
+```bash
+python manage.py publicserver
+```
+
+This will start up the application on address [http://0.0.0.0:5000](http://0.0.0.0:5000) which will expose this address
+making it accessible publicly to the host. There is a [Vagrantfile](./Vagrantfile) present in the root of the project. 
+[Vagrant](https://www.vagrantup.com/) will need to be installed as well as [VirtualBox](https://www.virtualbox.org/). 
+However, this setup is not necessary to have.
+
+
+
 ## Coding style
 
 [Black](https://github.com/ambv/black) is used for code formatting. Run black with:
