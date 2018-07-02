@@ -51,7 +51,7 @@ class Blockchain(object):
             timestamp=time(),
             transactions=self.current_transactions,
             proof=proof,
-            previous_hash=previous_hash or self.hash(self.chain[-1])
+            previous_hash=previous_hash or self.hash(self.chain[-1]),
         )
 
         # reset the current list of transactions
@@ -74,11 +74,9 @@ class Blockchain(object):
         :return: Index of the block that will hold this transaction
         :rtype: int
         """
-        self.current_transactions.append({
-            "sender": sender,
-            "recipient": recipient,
-            "amount": amount,
-        })
+        self.current_transactions.append(
+            {"sender": sender, "recipient": recipient, "amount": amount}
+        )
 
         return self.last_block["index"] + 1
 
@@ -162,8 +160,8 @@ class Blockchain(object):
 
         while current_index < len(chain):
             block = chain[current_index]
-            logger.debug(f'Last block {last_block}')
-            logger.debug(f'block {block}')
+            logger.debug(f"Last block {last_block}")
+            logger.debug(f"block {block}")
             logger.debug("\n-----------\n")
 
             # check that the hash of the block is correct
@@ -175,7 +173,9 @@ class Blockchain(object):
             # check that the proof of work is correct
 
             # Check that the Proof of Work is correct
-            if not self.valid_proof(last_block['proof'], block['proof'], last_block_hash):
+            if not self.valid_proof(
+                last_block["proof"], block["proof"], last_block_hash
+            ):
                 return False
 
             last_block = block
@@ -198,11 +198,11 @@ class Blockchain(object):
 
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
-            response = requests.get(f'http://{node}/chain')
+            response = requests.get(f"http://{node}/chain")
 
             if response.status_code == 200:
-                length = response.json()['length']
-                chain = response.json()['chain']
+                length = response.json()["length"]
+                chain = response.json()["chain"]
 
                 # Check if the length is longer and the chain is valid
                 if length > max_length and self.valid_chain(chain):

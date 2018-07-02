@@ -49,6 +49,7 @@ class DevelopmentConfig(Config):
     """
     Development configurations
     """
+
     DEBUG = True
 
 
@@ -56,6 +57,7 @@ class TestingConfig(Config):
     """
     Testing configurations
     """
+
     TESTING = True
     WTF_CSRF_ENABLED = False
     CSRF_ENABLED = False
@@ -66,6 +68,7 @@ class ProductionConfig(Config):
     """
     Production configuration
     """
+
     TESTING = False
     DEBUG = False
 
@@ -74,5 +77,5 @@ config = {
     "develop": DevelopmentConfig,
     "testing": TestingConfig,
     "production": ProductionConfig,
-    "default": DevelopmentConfig
+    "default": DevelopmentConfig,
 }

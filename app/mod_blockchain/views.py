@@ -21,11 +21,11 @@ def new_transaction():
         return "Missing values", 400
 
     # create a new transaction
-    index = blockchain.new_transaction(values["sender"], values["recipient"], values["amount"])
-
-    response = dict(
-        message=f"Transaction will be added to block {index}"
+    index = blockchain.new_transaction(
+        values["sender"], values["recipient"], values["amount"]
     )
+
+    response = dict(message=f"Transaction will be added to block {index}")
 
     return jsonify(response), 201
 
@@ -47,11 +47,7 @@ def mine_block():
 
     # We must receive a reward for finding the proof.
     # The sender is "0" to signify that this node has mined a new coin.
-    blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1
-    )
+    blockchain.new_transaction(sender="0", recipient=node_identifier, amount=1)
 
     # forge a new block by adding it to the chain
     previous_hash = blockchain.hash(last_block)
@@ -62,7 +58,7 @@ def mine_block():
         index=block["index"],
         transactions=block["transactions"],
         proof=block["proof"],
-        previous_hash=block["previous_hash"]
+        previous_hash=block["previous_hash"],
     )
 
     return jsonify(response), 200
@@ -70,18 +66,15 @@ def mine_block():
 
 @block.route("/chain", methods=["GET"])
 def get_chain():
-    response = dict(
-        chain=blockchain.chain,
-        length=len(blockchain.chain)
-    )
+    response = dict(chain=blockchain.chain, length=len(blockchain.chain))
     return jsonify(response), 200
 
 
-@block.route('/nodes/register', methods=['POST'])
+@block.route("/nodes/register", methods=["POST"])
 def register_nodes():
     values = request.get_json()
 
-    nodes = values.get('nodes')
+    nodes = values.get("nodes")
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
 
@@ -89,25 +82,19 @@ def register_nodes():
         blockchain.register_node(node)
 
     response = {
-        'message': 'New nodes have been added',
-        'total_nodes': list(blockchain.nodes),
+        "message": "New nodes have been added",
+        "total_nodes": list(blockchain.nodes),
     }
     return jsonify(response), 201
 
 
-@block.route('/nodes/resolve', methods=['GET'])
+@block.route("/nodes/resolve", methods=["GET"])
 def consensus():
     replaced = blockchain.resolve_conflicts()
 
     if replaced:
-        response = {
-            'message': 'Our chain was replaced',
-            'new_chain': blockchain.chain
-        }
+        response = {"message": "Our chain was replaced", "new_chain": blockchain.chain}
     else:
-        response = {
-            'message': 'Our chain is authoritative',
-            'chain': blockchain.chain
-        }
+        response = {"message": "Our chain is authoritative", "chain": blockchain.chain}
 
     return jsonify(response), 200

@@ -29,16 +29,19 @@ manager.add_command("publicserver", public_server)
 def test(cover=False):
     """Run the unit tests."""
     import coverage
-    cov = coverage.coverage(branch=True, include='app/*')
+
+    cov = coverage.coverage(branch=True, include="app/*")
     cov.start()
 
-    if cover and not os.environ.get('FLASK_COVERAGE'):
+    if cover and not os.environ.get("FLASK_COVERAGE"):
         import sys
-        os.environ['FLASK_COVERAGE'] = '1'
+
+        os.environ["FLASK_COVERAGE"] = "1"
         os.execvp(sys.executable, [sys.executable] + sys.argv)
 
     import unittest
-    tests = unittest.TestLoader().discover('tests')
+
+    tests = unittest.TestLoader().discover("tests")
     unittest.TextTestRunner(verbosity=2).run(tests)
     if cover:
         cov.stop()
@@ -47,7 +50,7 @@ def test(cover=False):
 
         cov.report()
         basedir = os.path.abspath(os.path.dirname(__file__))
-        covdir = os.path.join(basedir, 'coverage')
+        covdir = os.path.join(basedir, "coverage")
 
         # generate html report
         cov.html_report(directory=covdir)
@@ -72,7 +75,9 @@ def profile(length=25, profile_dir=None):
     from werkzeug.contrib.profiler import ProfilerMiddleware
 
     app.config["PROFILE"] = True
-    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length], profile_dir=profile_dir)
+    app.wsgi_app = ProfilerMiddleware(
+        app.wsgi_app, restrictions=[length], profile_dir=profile_dir
+    )
     app.run()
 
 
