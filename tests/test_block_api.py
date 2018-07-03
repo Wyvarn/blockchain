@@ -1,6 +1,7 @@
-import unittest
 import json
 from tests import BaseTestCase
+from unittest import main
+from unittest.mock import MagicMock, patch
 
 
 class BlockApiTestCases(BaseTestCase):
@@ -14,12 +15,37 @@ class BlockApiTestCases(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn('Transaction will be added to block ', response.data.decode("utf-8"))
 
-    def test_mine_block_returns_200_on_post_request(self):
-        """Test POST request to mine block route returns 200"""
+    @patch("app.mod_blockchain.views.uuid4", return_value=100)
+    def test_mine_block_returns_200_on_post_request(self, mock_uuid):
+        """Test POST request to mine block route returns 200 with block metadata"""
         response = self.client.post("/api/block/mine")
         self.assert200(response)
+
+        mock_uuid.return_value = 100
+
+        mock_node_identifier = str(mock_uuid()).replace("-", "")
+
+        last_block = self.blockchain.last_block
+        last_proof = last_block["proof"]
+        proof = self.blockchain.proof_of_work(last_proof)
+
+        self.blockchain.new_transaction(sender="0", recipient=mock_node_identifier, amount=1)
+
+        previous_hash = self.blockchain.hash(last_block)
+        block = self.blockchain.new_block(proof, previous_hash)
+
         data = json.loads(response.data.decode("utf-8"))
         self.assertEqual(data.get("message"), "New block forged")
+        self.assertEqual(data.get("index"), block["index"])
+        self.assertEqual(data.get("proof"), block["proof"])
+
+    def test_get_chain_returns_200_on_get_request(self):
+        response = self.client.get("/api/block/chain")
+        self.assert200(response)
+
+        data = json.loads(response.data.decode("utf-8"))
+        self.assertIn("chain", data)
+        self.assertEqual(data.get("length"), len(self.blockchain))
 
     # def test_registration_returns_201_when_user_data_is_posted(self):
     #     """Test POST request with data to registration returns 201 response"""
@@ -96,4 +122,4 @@ class BlockApiTestCases(BaseTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    main()

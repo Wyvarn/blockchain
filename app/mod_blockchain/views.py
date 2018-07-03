@@ -16,12 +16,12 @@ def new_transaction():
     logger.debug(f"Received values in creating new transaction {values}")
 
     if values is None:
-        return "Missing values", 400
+        return jsonify(dict(message="Missing values")), 400
 
     sender, recipient, amount = values.get("sender"), values.get("recipient"), values.get("amount")
 
     if sender is None or recipient is None or amount is None:
-        return "Missing values", 400
+        return jsonify(dict(message="Missing values")), 400
 
     # create a new transaction
     index = blockchain.new_transaction(sender, recipient, amount)
@@ -67,7 +67,7 @@ def mine_block():
 
 @block.route("/chain", methods=["GET"])
 def get_chain():
-    response = dict(chain=blockchain.chain, length=len(blockchain.chain))
+    response = dict(chain=blockchain.chain, length=len(blockchain))
     return jsonify(response), 200
 
 

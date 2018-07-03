@@ -216,3 +216,6 @@ class Blockchain(object):
             return True
 
         return False
+
+    def __len__(self):
+        return len(self.chain)
