@@ -12,18 +12,19 @@ blockchain = Blockchain()
 
 @block.route("/transactions/new", methods=["POST"])
 def new_transaction():
-    values = request.get_json()
+    values = request.values
     logger.debug(f"Received values in creating new transaction {values}")
 
-    required = ["sender", "recipient", "amount"]
+    if values is None:
+        return "Missing values", 400
 
-    if not all(value in values for value in required):
+    sender, recipient, amount = values.get("sender"), values.get("recipient"), values.get("amount")
+
+    if sender is None or recipient is None or amount is None:
         return "Missing values", 400
 
     # create a new transaction
-    index = blockchain.new_transaction(
-        values["sender"], values["recipient"], values["amount"]
-    )
+    index = blockchain.new_transaction(sender, recipient, amount)
 
     response = dict(message=f"Transaction will be added to block {index}")
 
