@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/Wyvarn/blockchain.svg?branch=master)](https://travis-ci.org/Wyvarn/blockchain)
 [![codecov](https://codecov.io/gh/Wyvarn/blockchain/branch/master/graph/badge.svg)](https://codecov.io/gh/Wyvarn/blockchain)
-
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](./LICENSE)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 

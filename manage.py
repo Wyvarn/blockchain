@@ -1,4 +1,3 @@
-import better_exceptions
 from flask_script import Manager, Shell, Server
 from app import create_app, logger
 import os
