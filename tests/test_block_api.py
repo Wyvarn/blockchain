@@ -1,7 +1,7 @@
 import json
-from tests import BaseTestCase
 from unittest import main, skip
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+from tests import BaseTestCase
 
 
 class BlockApiTestCases(BaseTestCase):
@@ -9,20 +9,24 @@ class BlockApiTestCases(BaseTestCase):
 
     def test_new_transaction_returns_201_on_post_request(self):
         """Test new transaction returns response of 201 for POST request with correct arguments"""
-        response = self.client.post('/api/block/transactions/new', json=dict(
-           sender="onluncd", recipient="bouncda", amount=100
-        ))
+        response = self.client.post(
+            "/api/block/transactions/new",
+            json=dict(sender="onluncd", recipient="bouncda", amount=100),
+        )
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Transaction will be added to block ', response.data.decode("utf-8"))
+        self.assertIn(
+            "Transaction will be added to block ", response.data.decode("utf-8")
+        )
 
     def test_new_transaction_returns_400_on_invalid_post_request(self):
         """Test new transaction returns 400 on invalid sender address"""
         # if sender is None
         sender = None
 
-        response = self.client.post('/api/block/transactions/new', json=dict(
-           sender=sender, recipient="bouncda", amount=100
-        ))
+        response = self.client.post(
+            "/api/block/transactions/new",
+            json=dict(sender=sender, recipient="bouncda", amount=100),
+        )
 
         self.assert400(response)
         data = json.loads(response.data.decode("utf-8"))
@@ -31,9 +35,10 @@ class BlockApiTestCases(BaseTestCase):
         # if recipient is None
         recipient = None
 
-        response = self.client.post('/api/block/transactions/new', json=dict(
-           sender="randomaddress", recipient=recipient, amount=100
-        ))
+        response = self.client.post(
+            "/api/block/transactions/new",
+            json=dict(sender="randomaddress", recipient=recipient, amount=100),
+        )
 
         self.assert400(response)
         data = json.loads(response.data.decode("utf-8"))
@@ -42,9 +47,10 @@ class BlockApiTestCases(BaseTestCase):
         # if amount is None
         amount = None
 
-        response = self.client.post('/api/block/transactions/new', json=dict(
-           sender="randomaddress", recipient="randomAddress", amount=amount
-        ))
+        response = self.client.post(
+            "/api/block/transactions/new",
+            json=dict(sender="randomaddress", recipient="randomAddress", amount=amount),
+        )
 
         self.assert400(response)
         data = json.loads(response.data.decode("utf-8"))
@@ -64,7 +70,9 @@ class BlockApiTestCases(BaseTestCase):
         last_proof = last_block["proof"]
         proof = self.blockchain.proof_of_work(last_proof)
 
-        self.blockchain.new_transaction(sender="0", recipient=mock_node_identifier, amount=1)
+        self.blockchain.new_transaction(
+            sender="0", recipient=mock_node_identifier, amount=1
+        )
 
         previous_hash = self.blockchain.hash(last_block)
         block = self.blockchain.new_block(proof, previous_hash)
@@ -84,11 +92,11 @@ class BlockApiTestCases(BaseTestCase):
 
     def test_register_nodes_returns_201_on_successful_post_request(self):
         """Test that POST request with valid nodes returns 201 with message and total_nodes"""
-        nodes = [
-            "http://192.168.1.0:8000"
-        ]
+        nodes = ["http://192.168.1.0:8000"]
 
-        response = self.client.post("/api/block/nodes/register", json=dict(nodes=nodes), headers=self.headers)
+        response = self.client.post(
+            "/api/block/nodes/register", json=dict(nodes=nodes), headers=self.headers
+        )
 
         self.assertEqual(response.status_code, 201)
 
@@ -108,9 +116,13 @@ class BlockApiTestCases(BaseTestCase):
 
         data = json.loads(response.data.decode("utf-8"))
 
-        self.assertEqual(data.get("message"), "Error: Please supply a valid list of nodes")
+        self.assertEqual(
+            data.get("message"), "Error: Please supply a valid list of nodes"
+        )
 
-    @skip("Execution takes long due to resolving of nodes, need to mock the resolve conflicts method from blockchain")
+    @skip(
+        "Execution takes long due to resolving of nodes, need to mock the resolve conflicts method from blockchain"
+    )
     def test_resolve_nodes_returns_200_on_successful_get_request(self):
         """Test GET request to nodes/resolve returns 200 with message and chain"""
 

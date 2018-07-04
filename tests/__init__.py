@@ -5,14 +5,13 @@ from app.mod_blockchain.blockchain import Blockchain
 
 
 class ContextTestCase(TestCase):
-
     def create_app(self):
         app = create_app("testing")
-        app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
+        app.config["PRESERVE_CONTEXT_ON_EXCEPTION"] = False
         return app
 
     def _pre_setup(self):
-        self.app = create_app('testing')
+        self.app = create_app("testing")
         self.client = self.app.test_client()
 
     def __call__(self, result=None):
@@ -23,7 +22,7 @@ class ContextTestCase(TestCase):
             self._post_teardown()
 
     def _post_teardown(self):
-        if getattr(self, '_ctx', None) and self._ctx is not None:
+        if getattr(self, "_ctx", None) and self._ctx is not None:
             self._ctx.pop()
             del self._ctx
 

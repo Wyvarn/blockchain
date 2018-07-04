@@ -18,7 +18,11 @@ def new_transaction():
     if values is None:
         return jsonify(dict(message="Missing values")), 400
 
-    sender, recipient, amount = values.get("sender"), values.get("recipient"), values.get("amount")
+    sender, recipient, amount = (
+        values.get("sender"),
+        values.get("recipient"),
+        values.get("amount"),
+    )
 
     if sender is None or recipient is None or amount is None:
         return jsonify(dict(message="Missing values")), 400
@@ -78,16 +82,13 @@ def register_nodes():
     nodes = values.get("nodes")
 
     if nodes is None:
-        return jsonify(dict(
-            message="Error: Please supply a valid list of nodes"),
-        ), 400
+        return jsonify(dict(message="Error: Please supply a valid list of nodes")), 400
 
     for node in nodes:
         blockchain.register_node(node)
 
     response = dict(
-        message="New nodes have been added",
-        total_nodes=list(blockchain.nodes),
+        message="New nodes have been added", total_nodes=list(blockchain.nodes)
     )
     return jsonify(response), 201
 
@@ -98,7 +99,7 @@ def consensus():
 
     response = dict(
         message=f"Our chain {'was replaced' if replaced else 'is authoritative'}",
-        chain=blockchain.chain
+        chain=blockchain.chain,
     )
 
     return jsonify(response), 200
