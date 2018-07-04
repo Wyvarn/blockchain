@@ -37,6 +37,7 @@ class BaseTestCase(ContextTestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.blockchain = Blockchain()
+        self.headers = {"Content-Type": "application/json"}
 
     def tearDown(self):
         self.app_context.pop()

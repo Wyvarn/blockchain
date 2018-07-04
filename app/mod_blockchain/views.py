@@ -12,7 +12,7 @@ blockchain = Blockchain()
 
 @block.route("/transactions/new", methods=["POST"])
 def new_transaction():
-    values = request.values
+    values = request.get_json()
     logger.debug(f"Received values in creating new transaction {values}")
 
     if values is None:
@@ -76,16 +76,19 @@ def register_nodes():
     values = request.get_json()
 
     nodes = values.get("nodes")
+
     if nodes is None:
-        return "Error: Please supply a valid list of nodes", 400
+        return jsonify(dict(
+            message="Error: Please supply a valid list of nodes"),
+        ), 400
 
     for node in nodes:
         blockchain.register_node(node)
 
-    response = {
-        "message": "New nodes have been added",
-        "total_nodes": list(blockchain.nodes),
-    }
+    response = dict(
+        message="New nodes have been added",
+        total_nodes=list(blockchain.nodes),
+    )
     return jsonify(response), 201
 
 
@@ -93,9 +96,9 @@ def register_nodes():
 def consensus():
     replaced = blockchain.resolve_conflicts()
 
-    if replaced:
-        response = {"message": "Our chain was replaced", "new_chain": blockchain.chain}
-    else:
-        response = {"message": "Our chain is authoritative", "chain": blockchain.chain}
+    response = dict(
+        message=f"Our chain {'was replaced' if replaced else 'is authoritative'}",
+        chain=blockchain.chain
+    )
 
     return jsonify(response), 200

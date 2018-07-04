@@ -6,7 +6,10 @@ python:
 
 install:
   - pip install pipenv
-  - pipenv install --dev
+  - pipenv install
 
 script:
-  - pipenv run python -m unittest
+  - python manage.py test -c
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

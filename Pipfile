@@ -15,6 +15,7 @@ black = "*"
 better-exceptions = "*"
 coverage = "*"
 flask-testing = "*"
+codecov = "*"
 
 [requires]
 python_version = "3.6"
